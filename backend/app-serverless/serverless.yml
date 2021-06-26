@@ -100,7 +100,7 @@ resources:
         UserPoolId:
           Ref: MysfitsUserPool
         CallbackURLs: 
-          - https://localhost:3000
+          - https://mythicalmysfits.houessou.com
         ExplicitAuthFlows:
           - ALLOW_USER_SRP_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH

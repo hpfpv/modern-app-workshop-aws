@@ -1,0 +1,116 @@
+service: mythicalmysfits-serverless
+frameworkVersion: '2'
+
+package:
+  patterns:
+    - '!./**'
+    - getmysfits.py
+    - getmysfit.py
+    - likemysfit.py
+    - adoptmysfit.py
+
+provider:
+  name: aws
+  runtime: python3.8
+  profile: serverless
+  lambdaHashingVersion: 20201221
+  environment:
+    DOMAIN_SUFFIX: houessou
+  iamRoleStatements:
+    - Effect: Allow
+      Action: dynamodb:*
+      Resource: 
+        - arn:aws:dynamodb:*:601091111123:table/MysfitsTable
+  httpApi:
+    authorizers:
+      MysfitsAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl: 
+          Fn::Join:
+          - ''
+          - - 'https://cognito-idp.'
+            - '${opt:region, self:provider.region}'
+            - '.amazonaws.com/'
+            - Ref: MysfitsUserPool
+        audience:
+          - Ref: MysfitsUserPoolClient
+
+functions:
+  getmysfits:
+    handler: getmysfits.all
+    events:
+      - httpApi:
+          path: /mysfits
+          method: GET
+          cors: true
+
+  getmysfit:
+    handler: getmysfit.lambda_handler
+    events:
+      - httpApi:
+          path: /mysfits/{mysfitId}
+          method: GET
+          cors: true
+
+  likemysfit:
+    handler: likemysfit.lambda_handler
+    events:
+      - httpApi:
+          path: /mysfits/{mysfitId}/like
+          method: POST
+          cors: true
+          authorizer: MysfitsAuthorizer
+
+  adoptmysfit:
+    handler: adoptmysfit.lambda_handler
+    events:
+      - httpApi:
+          path: /mysfits/{mysfitId}/adopt
+          method: POST
+          cors: true 
+          authorizer: MysfitsAuthorizer
+
+
+# Resources to be created with CloudFormation            
+resources:
+  Resources:
+    HttpApi:
+      DependsOn: MysfitsUserPool
+    MysfitsUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: MysfitsUserPoolServerless-${opt:stage, self:provider.stage}
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+    MysfitsUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: MysfitsUserPoolServerlessClient-${opt:stage, self:provider.stage}
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes:
+          - phone
+          - email
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        UserPoolId:
+          Ref: MysfitsUserPool
+        CallbackURLs: 
+          - https://localhost:3000
+        ExplicitAuthFlows:
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        GenerateSecret: false
+        SupportedIdentityProviders: 
+          - COGNITO
+    serviceUserPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain 
+      Properties:
+        UserPoolId: 
+          Ref: MysfitsUserPool
+        Domain: mythicalmysfits-${opt:stage, self:provider.stage}-${self:provider.environment.DOMAIN_SUFFIX}
+

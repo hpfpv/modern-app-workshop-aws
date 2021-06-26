@@ -1,0 +1,1136 @@
+{
+  "service": {
+    "service": "mythicalmysfits-serverless",
+    "serviceObject": {
+      "name": "mythicalmysfits-serverless"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.8",
+      "profile": "serverless",
+      "lambdaHashingVersion": "20201221",
+      "environment": {
+        "DOMAIN_SUFFIX": "houessoumysfits"
+      },
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "dynamodb:*"
+          ],
+          "Resource": "arn:aws:dynamodb:*:601091111123:table/MysfitsTable"
+        }
+      ],
+      "httpApi": {
+        "authorizers": {
+          "MysfitsAuthorizer": {
+            "identitySource": "$request.header.Authorization",
+            "issuerUrl": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://cognito-idp.",
+                  "us-east-1",
+                  ".amazonaws.com/",
+                  {
+                    "Ref": "MysfitsUserPool"
+                  }
+                ]
+              ]
+            },
+            "audience": [
+              {
+                "Ref": "MysfitsUserPoolClient"
+              }
+            ]
+          }
+        }
+      },
+      "stage": "dev",
+      "region": "us-east-1",
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            }
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "GetmysfitsLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mythicalmysfits-serverless-dev-getmysfits"
+            }
+          },
+          "GetmysfitLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mythicalmysfits-serverless-dev-getmysfit"
+            }
+          },
+          "LikemysfitLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mythicalmysfits-serverless-dev-likemysfit"
+            }
+          },
+          "AdoptmysfitLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mythicalmysfits-serverless-dev-adoptmysfit"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "mythicalmysfits-serverless",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/mythicalmysfits-serverless-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/mythicalmysfits-serverless-dev*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "mythicalmysfits-serverless",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "GetmysfitsLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z/mythicalmysfits-serverless.zip"
+              },
+              "Handler": "getmysfits.all",
+              "Runtime": "python3.8",
+              "FunctionName": "mythicalmysfits-serverless-dev-getmysfits",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DOMAIN_SUFFIX": "houessoumysfits"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetmysfitsLogGroup"
+            ]
+          },
+          "GetmysfitLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z/mythicalmysfits-serverless.zip"
+              },
+              "Handler": "getmysfit.lambda_handler",
+              "Runtime": "python3.8",
+              "FunctionName": "mythicalmysfits-serverless-dev-getmysfit",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DOMAIN_SUFFIX": "houessoumysfits"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetmysfitLogGroup"
+            ]
+          },
+          "LikemysfitLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z/mythicalmysfits-serverless.zip"
+              },
+              "Handler": "likemysfit.lambda_handler",
+              "Runtime": "python3.8",
+              "FunctionName": "mythicalmysfits-serverless-dev-likemysfit",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DOMAIN_SUFFIX": "houessoumysfits"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "LikemysfitLogGroup"
+            ]
+          },
+          "AdoptmysfitLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z/mythicalmysfits-serverless.zip"
+              },
+              "Handler": "adoptmysfit.lambda_handler",
+              "Runtime": "python3.8",
+              "FunctionName": "mythicalmysfits-serverless-dev-adoptmysfit",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DOMAIN_SUFFIX": "houessoumysfits"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "AdoptmysfitLogGroup"
+            ]
+          },
+          "GetmysfitsLambdaVersionGzUIrUbIjEMiw2yuGH8V0FKIFyHAinptgiwLFAM8u4": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetmysfitsLambdaFunction"
+              },
+              "CodeSha256": "YSpccCL9CiUUNrt7QMiU8n2hSzKqkux8BxDkuyI6Bt8="
+            }
+          },
+          "GetmysfitLambdaVersionw3C1snROBvrdWWJ85Bp8yFsGS6Qv9mspobeAFcCi2s": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetmysfitLambdaFunction"
+              },
+              "CodeSha256": "YSpccCL9CiUUNrt7QMiU8n2hSzKqkux8BxDkuyI6Bt8="
+            }
+          },
+          "LikemysfitLambdaVersionxL4SajF6JzmjaCimM4rTcPxTmtIUkyMgguNyHx6kY": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "LikemysfitLambdaFunction"
+              },
+              "CodeSha256": "YSpccCL9CiUUNrt7QMiU8n2hSzKqkux8BxDkuyI6Bt8="
+            }
+          },
+          "AdoptmysfitLambdaVersioneZwci0OxMsvcByxHujLTR5QypxLJlfAzXPtH7z4wtVQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AdoptmysfitLambdaFunction"
+              },
+              "CodeSha256": "YSpccCL9CiUUNrt7QMiU8n2hSzKqkux8BxDkuyI6Bt8="
+            }
+          },
+          "HttpApi": {
+            "Type": "AWS::ApiGatewayV2::Api",
+            "Properties": {
+              "Name": "dev-mythicalmysfits-serverless",
+              "ProtocolType": "HTTP"
+            },
+            "DependsOn": [
+              "MysfitsUserPool"
+            ]
+          },
+          "HttpApiStage": {
+            "Type": "AWS::ApiGatewayV2::Stage",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "StageName": "$default",
+              "AutoDeploy": true,
+              "DefaultRouteSettings": {
+                "DetailedMetricsEnabled": false
+              }
+            }
+          },
+          "HttpApiAuthorizerMysfitsAuthorizer": {
+            "Type": "AWS::ApiGatewayV2::Authorizer",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "Name": "MysfitsAuthorizer",
+              "IdentitySource": [
+                "$request.header.Authorization"
+              ],
+              "AuthorizerType": "JWT",
+              "JwtConfiguration": {
+                "Audience": [
+                  {
+                    "$ref": "$[\"service\"][\"provider\"][\"httpApi\"][\"authorizers\"][\"MysfitsAuthorizer\"][\"audience\"][0]"
+                  }
+                ],
+                "Issuer": {
+                  "$ref": "$[\"service\"][\"provider\"][\"httpApi\"][\"authorizers\"][\"MysfitsAuthorizer\"][\"issuerUrl\"]"
+                }
+              }
+            }
+          },
+          "GetmysfitsLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetmysfitsLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationGetmysfits": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GetmysfitsLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 6500
+            }
+          },
+          "HttpApiRouteGetMysfits": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /mysfits",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationGetmysfits"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationGetmysfits"
+          },
+          "GetmysfitLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetmysfitLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationGetmysfit": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GetmysfitLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 6500
+            }
+          },
+          "HttpApiRouteGetMysfitsMysfitidVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /mysfits/{mysfitId}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationGetmysfit"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationGetmysfit"
+          },
+          "LikemysfitLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "LikemysfitLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationLikemysfit": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"LikemysfitLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 6500
+            }
+          },
+          "HttpApiRoutePostMysfitsMysfitidVarLike": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /mysfits/{mysfitId}/like",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationLikemysfit"
+                    }
+                  ]
+                ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerMysfitsAuthorizer"
+              }
+            },
+            "DependsOn": "HttpApiIntegrationLikemysfit"
+          },
+          "AdoptmysfitLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "AdoptmysfitLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationAdoptmysfit": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"AdoptmysfitLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 6500
+            }
+          },
+          "HttpApiRoutePostMysfitsMysfitidVarAdopt": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /mysfits/{mysfitId}/adopt",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationAdoptmysfit"
+                    }
+                  ]
+                ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerMysfitsAuthorizer"
+              }
+            },
+            "DependsOn": "HttpApiIntegrationAdoptmysfit"
+          },
+          "MysfitsUserPool": {
+            "Type": "AWS::Cognito::UserPool",
+            "Properties": {
+              "UserPoolName": "MysfitsUserPoolServerless-dev",
+              "UsernameAttributes": [
+                "email"
+              ],
+              "AutoVerifiedAttributes": [
+                "email"
+              ]
+            }
+          },
+          "MysfitsUserPoolClient": {
+            "Type": "AWS::Cognito::UserPoolClient",
+            "Properties": {
+              "ClientName": "MysfitsUserPoolServerlessClient-dev",
+              "AllowedOAuthFlows": [
+                "implicit"
+              ],
+              "AllowedOAuthFlowsUserPoolClient": true,
+              "AllowedOAuthScopes": [
+                "phone",
+                "email",
+                "openid",
+                "profile",
+                "aws.cognito.signin.user.admin"
+              ],
+              "UserPoolId": {
+                "Ref": "MysfitsUserPool"
+              },
+              "CallbackURLs": [
+                "https://localhost:3000"
+              ],
+              "ExplicitAuthFlows": [
+                "ALLOW_USER_SRP_AUTH",
+                "ALLOW_REFRESH_TOKEN_AUTH"
+              ],
+              "GenerateSecret": false,
+              "SupportedIdentityProviders": [
+                "COGNITO"
+              ]
+            }
+          },
+          "serviceUserPoolDomain": {
+            "Type": "AWS::Cognito::UserPoolDomain",
+            "Properties": {
+              "UserPoolId": {
+                "Ref": "MysfitsUserPool"
+              },
+              "Domain": "mysfitsuserpoolserverlessdomain-dev-houessoumysfits"
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            },
+            "Export": {
+              "Name": "sls-mythicalmysfits-serverless-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "GetmysfitsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetmysfitsLambdaVersionGzUIrUbIjEMiw2yuGH8V0FKIFyHAinptgiwLFAM8u4"
+            },
+            "Export": {
+              "Name": "sls-mythicalmysfits-serverless-dev-GetmysfitsLambdaFunctionQualifiedArn"
+            }
+          },
+          "GetmysfitLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetmysfitLambdaVersionw3C1snROBvrdWWJ85Bp8yFsGS6Qv9mspobeAFcCi2s"
+            },
+            "Export": {
+              "Name": "sls-mythicalmysfits-serverless-dev-GetmysfitLambdaFunctionQualifiedArn"
+            }
+          },
+          "LikemysfitLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "LikemysfitLambdaVersionxL4SajF6JzmjaCimM4rTcPxTmtIUkyMgguNyHx6kY"
+            },
+            "Export": {
+              "Name": "sls-mythicalmysfits-serverless-dev-LikemysfitLambdaFunctionQualifiedArn"
+            }
+          },
+          "AdoptmysfitLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AdoptmysfitLambdaVersioneZwci0OxMsvcByxHujLTR5QypxLJlfAzXPtH7z4wtVQ"
+            },
+            "Export": {
+              "Name": "sls-mythicalmysfits-serverless-dev-AdoptmysfitLambdaFunctionQualifiedArn"
+            }
+          },
+          "HttpApiId": {
+            "Description": "Id of the HTTP API",
+            "Value": {
+              "Ref": "HttpApi"
+            },
+            "Export": {
+              "Name": "sls-mythicalmysfits-serverless-dev-HttpApiId"
+            }
+          },
+          "HttpApiUrl": {
+            "Description": "URL of the HTTP API",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  }
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-mythicalmysfits-serverless-dev-HttpApiUrl"
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            }
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "pluginsData": {},
+    "functions": {
+      "getmysfits": {
+        "handler": "getmysfits.all",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/mysfits",
+              "method": "GET",
+              "cors": true
+            },
+            "resolvedMethod": "GET",
+            "resolvedPath": "/mysfits"
+          }
+        ],
+        "name": "mythicalmysfits-serverless-dev-getmysfits",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "python3.8",
+        "vpc": {},
+        "versionLogicalId": "GetmysfitsLambdaVersionGzUIrUbIjEMiw2yuGH8V0FKIFyHAinptgiwLFAM8u4"
+      },
+      "getmysfit": {
+        "handler": "getmysfit.lambda_handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/mysfits/{mysfitId}",
+              "method": "GET",
+              "cors": true
+            },
+            "resolvedMethod": "GET",
+            "resolvedPath": "/mysfits/{mysfitId}"
+          }
+        ],
+        "name": "mythicalmysfits-serverless-dev-getmysfit",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "python3.8",
+        "vpc": {},
+        "versionLogicalId": "GetmysfitLambdaVersionw3C1snROBvrdWWJ85Bp8yFsGS6Qv9mspobeAFcCi2s"
+      },
+      "likemysfit": {
+        "handler": "likemysfit.lambda_handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/mysfits/{mysfitId}/like",
+              "method": "POST",
+              "cors": true,
+              "authorizer": "MysfitsAuthorizer"
+            },
+            "resolvedMethod": "POST",
+            "resolvedPath": "/mysfits/{mysfitId}/like"
+          }
+        ],
+        "name": "mythicalmysfits-serverless-dev-likemysfit",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "python3.8",
+        "vpc": {},
+        "versionLogicalId": "LikemysfitLambdaVersionxL4SajF6JzmjaCimM4rTcPxTmtIUkyMgguNyHx6kY"
+      },
+      "adoptmysfit": {
+        "handler": "adoptmysfit.lambda_handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/mysfits/{mysfitId}/adopt",
+              "method": "POST",
+              "cors": true,
+              "authorizer": "MysfitsAuthorizer"
+            },
+            "resolvedMethod": "POST",
+            "resolvedPath": "/mysfits/{mysfitId}/adopt"
+          }
+        ],
+        "name": "mythicalmysfits-serverless-dev-adoptmysfit",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "python3.8",
+        "vpc": {},
+        "versionLogicalId": "AdoptmysfitLambdaVersioneZwci0OxMsvcByxHujLTR5QypxLJlfAzXPtH7z4wtVQ"
+      }
+    },
+    "resources": {
+      "Resources": {
+        "HttpApi": {
+          "DependsOn": [
+            "MysfitsUserPool"
+          ]
+        },
+        "MysfitsUserPool": {
+          "Type": "AWS::Cognito::UserPool",
+          "Properties": {
+            "UserPoolName": "MysfitsUserPoolServerless-dev",
+            "UsernameAttributes": [
+              "email"
+            ],
+            "AutoVerifiedAttributes": [
+              "email"
+            ]
+          }
+        },
+        "MysfitsUserPoolClient": {
+          "Type": "AWS::Cognito::UserPoolClient",
+          "Properties": {
+            "ClientName": "MysfitsUserPoolServerlessClient-dev",
+            "AllowedOAuthFlows": [
+              "implicit"
+            ],
+            "AllowedOAuthFlowsUserPoolClient": true,
+            "AllowedOAuthScopes": [
+              "phone",
+              "email",
+              "openid",
+              "profile",
+              "aws.cognito.signin.user.admin"
+            ],
+            "UserPoolId": {
+              "Ref": "MysfitsUserPool"
+            },
+            "CallbackURLs": [
+              "https://localhost:3000"
+            ],
+            "ExplicitAuthFlows": [
+              "ALLOW_USER_SRP_AUTH",
+              "ALLOW_REFRESH_TOKEN_AUTH"
+            ],
+            "GenerateSecret": false,
+            "SupportedIdentityProviders": [
+              "COGNITO"
+            ]
+          }
+        },
+        "serviceUserPoolDomain": {
+          "Type": "AWS::Cognito::UserPoolDomain",
+          "Properties": {
+            "UserPoolId": {
+              "Ref": "MysfitsUserPool"
+            },
+            "Domain": "mysfitsuserpoolserverlessdomain-dev-houessoumysfits"
+          }
+        }
+      },
+      "Outputs": {}
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless.yml",
+    "initialServerlessConfig": {
+      "service": {
+        "$ref": "$[\"service\"][\"serviceObject\"]"
+      },
+      "frameworkVersion": "2",
+      "package": {
+        "patterns": [
+          "!./**",
+          "getmysfits.py",
+          "getmysfit.py",
+          "likemysfit.py",
+          "adoptmysfit.py"
+        ],
+        "artifact": "/Users/hpf/Desktop/HPF/cloud-learning-projects/aws-turorial/aws-modern-application/app-serverless/.serverless/mythicalmysfits-serverless.zip",
+        "artifactDirectoryName": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z"
+      },
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "functions": {
+        "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "resources": {
+        "$ref": "$[\"service\"][\"resources\"]"
+      }
+    },
+    "layers": {},
+    "isDashboardMonitoringPreconfigured": false,
+    "artifact": "/Users/hpf/Desktop/HPF/cloud-learning-projects/aws-turorial/aws-modern-application/app-serverless/.serverless/mythicalmysfits-serverless.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z",
+    "artifact": "mythicalmysfits-serverless.zip"
+  }
+}

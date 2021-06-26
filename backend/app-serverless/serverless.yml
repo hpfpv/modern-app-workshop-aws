@@ -21,6 +21,7 @@ provider:
       Action: dynamodb:*
       Resource: 
         - arn:aws:dynamodb:*:601091111123:table/MysfitsTable
+        - arn:aws:dynamodb:*:601091111123:table/MysfitsTable/index/*
   httpApi:
     authorizers:
       MysfitsAuthorizer:
@@ -37,7 +38,7 @@ provider:
 
 functions:
   getmysfits:
-    handler: getmysfits.all
+    handler: getmysfits.lambda_handler
     events:
       - httpApi:
           path: /mysfits

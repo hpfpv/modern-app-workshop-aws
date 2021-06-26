@@ -10,7 +10,7 @@
       "profile": "serverless",
       "lambdaHashingVersion": "20201221",
       "environment": {
-        "DOMAIN_SUFFIX": "houessoumysfits"
+        "DOMAIN_SUFFIX": "houessou"
       },
       "iamRoleStatements": [
         {
@@ -18,7 +18,10 @@
           "Action": [
             "dynamodb:*"
           ],
-          "Resource": "arn:aws:dynamodb:*:601091111123:table/MysfitsTable"
+          "Resource": [
+            "arn:aws:dynamodb:*:601091111123:table/MysfitsTable",
+            "arn:aws:dynamodb:*:601091111123:table/MysfitsTable/index/*"
+          ]
         }
       ],
       "httpApi": {
@@ -233,16 +236,16 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z/mythicalmysfits-serverless.zip"
+                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624737579888-2021-06-26T19:59:39.888Z/mythicalmysfits-serverless.zip"
               },
-              "Handler": "getmysfits.all",
+              "Handler": "getmysfits.lambda_handler",
               "Runtime": "python3.8",
               "FunctionName": "mythicalmysfits-serverless-dev-getmysfits",
               "MemorySize": 1024,
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "DOMAIN_SUFFIX": "houessoumysfits"
+                  "DOMAIN_SUFFIX": "houessou"
                 }
               },
               "Role": {
@@ -263,7 +266,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z/mythicalmysfits-serverless.zip"
+                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624737579888-2021-06-26T19:59:39.888Z/mythicalmysfits-serverless.zip"
               },
               "Handler": "getmysfit.lambda_handler",
               "Runtime": "python3.8",
@@ -272,7 +275,7 @@
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "DOMAIN_SUFFIX": "houessoumysfits"
+                  "DOMAIN_SUFFIX": "houessou"
                 }
               },
               "Role": {
@@ -293,7 +296,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z/mythicalmysfits-serverless.zip"
+                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624737579888-2021-06-26T19:59:39.888Z/mythicalmysfits-serverless.zip"
               },
               "Handler": "likemysfit.lambda_handler",
               "Runtime": "python3.8",
@@ -302,7 +305,7 @@
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "DOMAIN_SUFFIX": "houessoumysfits"
+                  "DOMAIN_SUFFIX": "houessou"
                 }
               },
               "Role": {
@@ -323,7 +326,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z/mythicalmysfits-serverless.zip"
+                "S3Key": "serverless/mythicalmysfits-serverless/dev/1624737579888-2021-06-26T19:59:39.888Z/mythicalmysfits-serverless.zip"
               },
               "Handler": "adoptmysfit.lambda_handler",
               "Runtime": "python3.8",
@@ -332,7 +335,7 @@
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "DOMAIN_SUFFIX": "houessoumysfits"
+                  "DOMAIN_SUFFIX": "houessou"
                 }
               },
               "Role": {
@@ -346,44 +349,44 @@
               "AdoptmysfitLogGroup"
             ]
           },
-          "GetmysfitsLambdaVersionGzUIrUbIjEMiw2yuGH8V0FKIFyHAinptgiwLFAM8u4": {
+          "GetmysfitsLambdaVersionEtGo5i94vLbYPge0R9EUdNAdSrjurWw7R6me9V3wTw": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetmysfitsLambdaFunction"
               },
-              "CodeSha256": "YSpccCL9CiUUNrt7QMiU8n2hSzKqkux8BxDkuyI6Bt8="
+              "CodeSha256": "vbycf4VYbWX/6IBY6i4V3FiYf10I9KL0b8F0z1J6MP8="
             }
           },
-          "GetmysfitLambdaVersionw3C1snROBvrdWWJ85Bp8yFsGS6Qv9mspobeAFcCi2s": {
+          "GetmysfitLambdaVersionIukIOGD1RgLBZHXfmnNa95nn8NldZW3jQpEVwbLDDA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetmysfitLambdaFunction"
               },
-              "CodeSha256": "YSpccCL9CiUUNrt7QMiU8n2hSzKqkux8BxDkuyI6Bt8="
+              "CodeSha256": "vbycf4VYbWX/6IBY6i4V3FiYf10I9KL0b8F0z1J6MP8="
             }
           },
-          "LikemysfitLambdaVersionxL4SajF6JzmjaCimM4rTcPxTmtIUkyMgguNyHx6kY": {
+          "LikemysfitLambdaVersionAZylwKs0NrNiEDF19Vg9Lee6lUNOXIVFOiHTRBE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "LikemysfitLambdaFunction"
               },
-              "CodeSha256": "YSpccCL9CiUUNrt7QMiU8n2hSzKqkux8BxDkuyI6Bt8="
+              "CodeSha256": "vbycf4VYbWX/6IBY6i4V3FiYf10I9KL0b8F0z1J6MP8="
             }
           },
-          "AdoptmysfitLambdaVersioneZwci0OxMsvcByxHujLTR5QypxLJlfAzXPtH7z4wtVQ": {
+          "AdoptmysfitLambdaVersionZJUQCVXAGT0gy9ehHgPRagniRu3J17XFiB8fnjyT6s": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AdoptmysfitLambdaFunction"
               },
-              "CodeSha256": "YSpccCL9CiUUNrt7QMiU8n2hSzKqkux8BxDkuyI6Bt8="
+              "CodeSha256": "vbycf4VYbWX/6IBY6i4V3FiYf10I9KL0b8F0z1J6MP8="
             }
           },
           "HttpApi": {
@@ -759,7 +762,7 @@
                 "Ref": "MysfitsUserPool"
               },
               "CallbackURLs": [
-                "https://localhost:3000"
+                "https://mythicalmysfits.houessou.com"
               ],
               "ExplicitAuthFlows": [
                 "ALLOW_USER_SRP_AUTH",
@@ -776,8 +779,7 @@
             "Properties": {
               "UserPoolId": {
                 "Ref": "MysfitsUserPool"
-              },
-              "Domain": "mysfitsuserpoolserverlessdomain-dev-houessoumysfits"
+              }
             }
           }
         },
@@ -793,7 +795,7 @@
           "GetmysfitsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetmysfitsLambdaVersionGzUIrUbIjEMiw2yuGH8V0FKIFyHAinptgiwLFAM8u4"
+              "Ref": "GetmysfitsLambdaVersionEtGo5i94vLbYPge0R9EUdNAdSrjurWw7R6me9V3wTw"
             },
             "Export": {
               "Name": "sls-mythicalmysfits-serverless-dev-GetmysfitsLambdaFunctionQualifiedArn"
@@ -802,7 +804,7 @@
           "GetmysfitLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetmysfitLambdaVersionw3C1snROBvrdWWJ85Bp8yFsGS6Qv9mspobeAFcCi2s"
+              "Ref": "GetmysfitLambdaVersionIukIOGD1RgLBZHXfmnNa95nn8NldZW3jQpEVwbLDDA"
             },
             "Export": {
               "Name": "sls-mythicalmysfits-serverless-dev-GetmysfitLambdaFunctionQualifiedArn"
@@ -811,7 +813,7 @@
           "LikemysfitLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "LikemysfitLambdaVersionxL4SajF6JzmjaCimM4rTcPxTmtIUkyMgguNyHx6kY"
+              "Ref": "LikemysfitLambdaVersionAZylwKs0NrNiEDF19Vg9Lee6lUNOXIVFOiHTRBE"
             },
             "Export": {
               "Name": "sls-mythicalmysfits-serverless-dev-LikemysfitLambdaFunctionQualifiedArn"
@@ -820,7 +822,7 @@
           "AdoptmysfitLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AdoptmysfitLambdaVersioneZwci0OxMsvcByxHujLTR5QypxLJlfAzXPtH7z4wtVQ"
+              "Ref": "AdoptmysfitLambdaVersionZJUQCVXAGT0gy9ehHgPRagniRu3J17XFiB8fnjyT6s"
             },
             "Export": {
               "Name": "sls-mythicalmysfits-serverless-dev-AdoptmysfitLambdaFunctionQualifiedArn"
@@ -949,7 +951,7 @@
     "pluginsData": {},
     "functions": {
       "getmysfits": {
-        "handler": "getmysfits.all",
+        "handler": "getmysfits.lambda_handler",
         "events": [
           {
             "httpApi": {
@@ -967,7 +969,7 @@
         "timeout": 6,
         "runtime": "python3.8",
         "vpc": {},
-        "versionLogicalId": "GetmysfitsLambdaVersionGzUIrUbIjEMiw2yuGH8V0FKIFyHAinptgiwLFAM8u4"
+        "versionLogicalId": "GetmysfitsLambdaVersionEtGo5i94vLbYPge0R9EUdNAdSrjurWw7R6me9V3wTw"
       },
       "getmysfit": {
         "handler": "getmysfit.lambda_handler",
@@ -988,7 +990,7 @@
         "timeout": 6,
         "runtime": "python3.8",
         "vpc": {},
-        "versionLogicalId": "GetmysfitLambdaVersionw3C1snROBvrdWWJ85Bp8yFsGS6Qv9mspobeAFcCi2s"
+        "versionLogicalId": "GetmysfitLambdaVersionIukIOGD1RgLBZHXfmnNa95nn8NldZW3jQpEVwbLDDA"
       },
       "likemysfit": {
         "handler": "likemysfit.lambda_handler",
@@ -1010,7 +1012,7 @@
         "timeout": 6,
         "runtime": "python3.8",
         "vpc": {},
-        "versionLogicalId": "LikemysfitLambdaVersionxL4SajF6JzmjaCimM4rTcPxTmtIUkyMgguNyHx6kY"
+        "versionLogicalId": "LikemysfitLambdaVersionAZylwKs0NrNiEDF19Vg9Lee6lUNOXIVFOiHTRBE"
       },
       "adoptmysfit": {
         "handler": "adoptmysfit.lambda_handler",
@@ -1032,7 +1034,7 @@
         "timeout": 6,
         "runtime": "python3.8",
         "vpc": {},
-        "versionLogicalId": "AdoptmysfitLambdaVersioneZwci0OxMsvcByxHujLTR5QypxLJlfAzXPtH7z4wtVQ"
+        "versionLogicalId": "AdoptmysfitLambdaVersionZJUQCVXAGT0gy9ehHgPRagniRu3J17XFiB8fnjyT6s"
       }
     },
     "resources": {
@@ -1073,7 +1075,7 @@
               "Ref": "MysfitsUserPool"
             },
             "CallbackURLs": [
-              "https://localhost:3000"
+              "https://mythicalmysfits.houessou.com"
             ],
             "ExplicitAuthFlows": [
               "ALLOW_USER_SRP_AUTH",
@@ -1090,8 +1092,7 @@
           "Properties": {
             "UserPoolId": {
               "Ref": "MysfitsUserPool"
-            },
-            "Domain": "mysfitsuserpoolserverlessdomain-dev-houessoumysfits"
+            }
           }
         }
       },
@@ -1112,8 +1113,8 @@
           "likemysfit.py",
           "adoptmysfit.py"
         ],
-        "artifact": "/Users/hpf/Desktop/HPF/cloud-learning-projects/aws-turorial/aws-modern-application/app-serverless/.serverless/mythicalmysfits-serverless.zip",
-        "artifactDirectoryName": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z"
+        "artifact": "/Users/hpf/Desktop/HPF/cloud-learning-projects/aws-turorial/aws-modern-application/mythicalmysfits/backend/app-serverless/.serverless/mythicalmysfits-serverless.zip",
+        "artifactDirectoryName": "serverless/mythicalmysfits-serverless/dev/1624737579888-2021-06-26T19:59:39.888Z"
       },
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
@@ -1127,10 +1128,10 @@
     },
     "layers": {},
     "isDashboardMonitoringPreconfigured": false,
-    "artifact": "/Users/hpf/Desktop/HPF/cloud-learning-projects/aws-turorial/aws-modern-application/app-serverless/.serverless/mythicalmysfits-serverless.zip"
+    "artifact": "/Users/hpf/Desktop/HPF/cloud-learning-projects/aws-turorial/aws-modern-application/mythicalmysfits/backend/app-serverless/.serverless/mythicalmysfits-serverless.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/mythicalmysfits-serverless/dev/1624704714669-2021-06-26T10:51:54.669Z",
+    "artifactDirectoryName": "serverless/mythicalmysfits-serverless/dev/1624737579888-2021-06-26T19:59:39.888Z",
     "artifact": "mythicalmysfits-serverless.zip"
   }
 }

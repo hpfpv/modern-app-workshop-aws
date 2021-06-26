@@ -54,10 +54,15 @@ def getmysfits():
     mysfitList = getMysfitsJson(response["Items"]) 
     return json.dumps(mysfitList)
 
-def all(event, context):
-    print("Getting all values")
-    items = getmysfits()
-    
+def lambda_handler(event, context):
+    if (event["rawQueryString"] == ""):
+        print("Getting all values")
+        items = getmysfits()
+    else:
+        print("Getting filtered values")
+        data = event["queryStringParameters"].items()
+        for key, value in data:
+            items = queryMysfitItems(key, value)
     return {
         'statusCode': 200,
         'headers': {
@@ -69,34 +74,3 @@ def all(event, context):
         'body': items
     }
 
-def goodevil(event, context):
-    filter = 'GoodEvil' 
-    value = event["queryStringParameters"]['GoodEvil'] 
-    print('Getting filtered values')
-    items = queryMysfitItems(filter, value)
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-            'Access-Control-Allow-Methods': '*',
-            'Content-Type': 'application/json'
-        },
-        'body': items
-    }
-
-def lawchaos(event, context):
-    filter = 'LawChaos' 
-    value = event["queryStringParameters"]['LawChaos'] 
-    print('Getting filtered values')
-    items = queryMysfitItems(filter, value)
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-            'Access-Control-Allow-Methods': '*',
-            'Content-Type': 'application/json'
-        },
-        'body': items
-    }

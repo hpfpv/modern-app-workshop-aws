@@ -15,7 +15,7 @@ provider:
   profile: serverless
   lambdaHashingVersion: 20201221
   environment:
-    DOMAIN_SUFFIX: houessou
+    DOMAIN_SUFFIX: mythicalmysfits.houessou.com
   iamRoleStatements:
     - Effect: Allow
       Action: dynamodb:*
@@ -23,6 +23,7 @@ provider:
         - arn:aws:dynamodb:*:601091111123:table/MysfitsTable
         - arn:aws:dynamodb:*:601091111123:table/MysfitsTable/index/*
   httpApi:
+    cors: true
     authorizers:
       MysfitsAuthorizer:
         identitySource: $request.header.Authorization
@@ -43,7 +44,6 @@ functions:
       - httpApi:
           path: /mysfits
           method: GET
-          cors: true
 
   getmysfit:
     handler: getmysfit.lambda_handler
@@ -51,7 +51,6 @@ functions:
       - httpApi:
           path: /mysfits/{mysfitId}
           method: GET
-          cors: true
 
   likemysfit:
     handler: likemysfit.lambda_handler
@@ -59,7 +58,6 @@ functions:
       - httpApi:
           path: /mysfits/{mysfitId}/like
           method: POST
-          cors: true
           authorizer: MysfitsAuthorizer
 
   adoptmysfit:
@@ -68,7 +66,6 @@ functions:
       - httpApi:
           path: /mysfits/{mysfitId}/adopt
           method: POST
-          cors: true 
           authorizer: MysfitsAuthorizer
 
 
@@ -113,5 +110,52 @@ resources:
       Properties:
         UserPoolId: 
           Ref: MysfitsUserPool
-        Domain: mythicalmysfits-${opt:stage, self:provider.stage}-${self:provider.environment.DOMAIN_SUFFIX}
+        Domain: auth.${self:provider.environment.DOMAIN_SUFFIX}
+MysfitsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "MysfitsTableServerless"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      AttributeDefinitions: 
+        -
+          AttributeName: "MysfitId"
+          AttributeType: "S"
+        -
+          AttributeName: "GoodEvil"
+          AttributeType: "S"
+        - 
+          AttributeName: "LawChaos"
+          AttributeType: "S"
+        - 
+          AttributeName: "Recovered"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "MysfitId"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "LawChaosIndex"
+          KeySchema:
+            - AttributeName: "LawChaos"
+              KeyType: "HASH"
+            - AttributeName: "MysfitId"
+              KeyType: "HASH"
+          Projection: 
+            ProjectionType: "ALL"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        - IndexName: "GoodEvilIndex"
+          KeySchema:
+            - AttributeName: "GoodEvil"
+              KeyType: "HASH"
+            - AttributeName: "MysfitId"
+              KeyType: "RANGE"
+          Projection: 
+            ProjectionType: "ALL"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
 

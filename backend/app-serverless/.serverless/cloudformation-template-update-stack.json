@@ -189,7 +189,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624738560719-2021-06-26T20:16:00.719Z/mythicalmysfits-serverless.zip"
+          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624794945648-2021-06-27T11:55:45.648Z/mythicalmysfits-serverless.zip"
         },
         "Handler": "getmysfits.lambda_handler",
         "Runtime": "python3.8",
@@ -198,7 +198,7 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
-            "DOMAIN_SUFFIX": "mythicalmysfits.houessou.com"
+            "DOMAIN_SUFFIX": "mythicalmysfits-houessou-com"
           }
         },
         "Role": {
@@ -219,7 +219,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624738560719-2021-06-26T20:16:00.719Z/mythicalmysfits-serverless.zip"
+          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624794945648-2021-06-27T11:55:45.648Z/mythicalmysfits-serverless.zip"
         },
         "Handler": "getmysfit.lambda_handler",
         "Runtime": "python3.8",
@@ -228,7 +228,7 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
-            "DOMAIN_SUFFIX": "mythicalmysfits.houessou.com"
+            "DOMAIN_SUFFIX": "mythicalmysfits-houessou-com"
           }
         },
         "Role": {
@@ -249,7 +249,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624738560719-2021-06-26T20:16:00.719Z/mythicalmysfits-serverless.zip"
+          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624794945648-2021-06-27T11:55:45.648Z/mythicalmysfits-serverless.zip"
         },
         "Handler": "likemysfit.lambda_handler",
         "Runtime": "python3.8",
@@ -258,7 +258,7 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
-            "DOMAIN_SUFFIX": "mythicalmysfits.houessou.com"
+            "DOMAIN_SUFFIX": "mythicalmysfits-houessou-com"
           }
         },
         "Role": {
@@ -279,7 +279,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624738560719-2021-06-26T20:16:00.719Z/mythicalmysfits-serverless.zip"
+          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624794945648-2021-06-27T11:55:45.648Z/mythicalmysfits-serverless.zip"
         },
         "Handler": "adoptmysfit.lambda_handler",
         "Runtime": "python3.8",
@@ -288,7 +288,7 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
-            "DOMAIN_SUFFIX": "mythicalmysfits.houessou.com"
+            "DOMAIN_SUFFIX": "mythicalmysfits-houessou-com"
           }
         },
         "Role": {
@@ -302,7 +302,7 @@
         "AdoptmysfitLogGroup"
       ]
     },
-    "GetmysfitsLambdaVersionHXMbhFyUMoZ70beD2WhzGVJNTtpLQD23mKWfvkpfCtc": {
+    "GetmysfitsLambdaVersionxtXgvS7E4Q9DOXgfxSbAjQnrQqZ1o2thsTMshLbP4M": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -312,7 +312,7 @@
         "CodeSha256": "4qPu24H/VIkB8gIhCWFCfcXqmkIKcHEDEulNYblldE0="
       }
     },
-    "GetmysfitLambdaVersionUob06kLzVaCBocaPJiRcOriUKJgSIZf7G1qAGBY": {
+    "GetmysfitLambdaVersionUx5DwzcCOm7Z3Iusg7eCFsrmc7HMHhcVrHzIEbnJIA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -322,7 +322,7 @@
         "CodeSha256": "4qPu24H/VIkB8gIhCWFCfcXqmkIKcHEDEulNYblldE0="
       }
     },
-    "LikemysfitLambdaVersion7ewS9QH273eTtAna2WwmXKAshobnARlA6dwKzxvLmMA": {
+    "LikemysfitLambdaVersionLUWP7zPXMY5Neb8AVezpRsslo6CMIK15LBvjE4v93U": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -332,7 +332,7 @@
         "CodeSha256": "4qPu24H/VIkB8gIhCWFCfcXqmkIKcHEDEulNYblldE0="
       }
     },
-    "AdoptmysfitLambdaVersionnPAOqtETC4uu7LaOTgK9nKivBAm74ZMqJKmOoFMfAw": {
+    "AdoptmysfitLambdaVersionVp0BomjvyIrhpt02uNzhJSbuEfi1mkxQw4hC9rlWqc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -767,13 +767,120 @@
         ]
       }
     },
-    "serviceUserPoolDomain": {
+    "MysfitsUserPoolDomain": {
       "Type": "AWS::Cognito::UserPoolDomain",
       "Properties": {
         "UserPoolId": {
           "Ref": "MysfitsUserPool"
         },
-        "Domain": "auth.mythicalmysfits.houessou.com"
+        "Domain": "auth.mythicalmysfits.houessou.com",
+        "CustomDomainConfig": {
+          "CertificateArn": "arn:aws:acm:us-east-1:601091111123:certificate/3ca5c12d-3d79-4d96-a91f-0e9b38477474"
+        }
+      }
+    },
+    "MysfitsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "MysfitsTableServerless",
+        "BillingMode": "PROVISIONED",
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "MysfitId",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "GoodEvil",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "LawChaos",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "MysfitId",
+            "KeyType": "HASH"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "LawChaosIndex",
+            "KeySchema": [
+              {
+                "AttributeName": "LawChaos",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "MysfitId",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          },
+          {
+            "IndexName": "GoodEvilIndex",
+            "KeySchema": [
+              {
+                "AttributeName": "GoodEvil",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "MysfitId",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ]
+      }
+    },
+    "MysfitsBucketWeb": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketName": "hpf-mythicalmysfitsserverless-web-dev",
+        "WebsiteConfiguration": {
+          "ErrorDocument": "index.html",
+          "IndexDocument": "index.html"
+        }
+      }
+    },
+    "ReadPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "MysfitsBucketWeb"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": "arn:aws:s3:::${MysfitsBucketWeb}/*"
+              },
+              "Principal": "*"
+            }
+          ]
+        }
       }
     }
   },
@@ -789,7 +896,7 @@
     "GetmysfitsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetmysfitsLambdaVersionHXMbhFyUMoZ70beD2WhzGVJNTtpLQD23mKWfvkpfCtc"
+        "Ref": "GetmysfitsLambdaVersionxtXgvS7E4Q9DOXgfxSbAjQnrQqZ1o2thsTMshLbP4M"
       },
       "Export": {
         "Name": "sls-mythicalmysfits-serverless-dev-GetmysfitsLambdaFunctionQualifiedArn"
@@ -798,7 +905,7 @@
     "GetmysfitLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetmysfitLambdaVersionUob06kLzVaCBocaPJiRcOriUKJgSIZf7G1qAGBY"
+        "Ref": "GetmysfitLambdaVersionUx5DwzcCOm7Z3Iusg7eCFsrmc7HMHhcVrHzIEbnJIA"
       },
       "Export": {
         "Name": "sls-mythicalmysfits-serverless-dev-GetmysfitLambdaFunctionQualifiedArn"
@@ -807,7 +914,7 @@
     "LikemysfitLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "LikemysfitLambdaVersion7ewS9QH273eTtAna2WwmXKAshobnARlA6dwKzxvLmMA"
+        "Ref": "LikemysfitLambdaVersionLUWP7zPXMY5Neb8AVezpRsslo6CMIK15LBvjE4v93U"
       },
       "Export": {
         "Name": "sls-mythicalmysfits-serverless-dev-LikemysfitLambdaFunctionQualifiedArn"
@@ -816,7 +923,7 @@
     "AdoptmysfitLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AdoptmysfitLambdaVersionnPAOqtETC4uu7LaOTgK9nKivBAm74ZMqJKmOoFMfAw"
+        "Ref": "AdoptmysfitLambdaVersionVp0BomjvyIrhpt02uNzhJSbuEfi1mkxQw4hC9rlWqc"
       },
       "Export": {
         "Name": "sls-mythicalmysfits-serverless-dev-AdoptmysfitLambdaFunctionQualifiedArn"

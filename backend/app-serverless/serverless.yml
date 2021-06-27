@@ -15,7 +15,7 @@ provider:
   profile: serverless
   lambdaHashingVersion: 20201221
   environment:
-    DOMAIN_SUFFIX: mythicalmysfits.houessou.com
+    DOMAIN_SUFFIX: mythicalmysfits-houessou-com
   iamRoleStatements:
     - Effect: Allow
       Action: dynamodb:*
@@ -74,6 +74,7 @@ resources:
   Resources:
     HttpApi:
       DependsOn: MysfitsUserPool
+    # Cognito user pool for authentication
     MysfitsUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
@@ -82,6 +83,7 @@ resources:
           - email
         AutoVerifiedAttributes:
           - email
+    # Cognito user pool client
     MysfitsUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:
@@ -105,57 +107,75 @@ resources:
         GenerateSecret: false
         SupportedIdentityProviders: 
           - COGNITO
-    serviceUserPoolDomain:
+    # Cognito user pool domain
+    MysfitsUserPoolDomain:
       Type: AWS::Cognito::UserPoolDomain 
       Properties:
-        UserPoolId: 
-          Ref: MysfitsUserPool
-        Domain: auth.${self:provider.environment.DOMAIN_SUFFIX}
-MysfitsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: "MysfitsTableServerless"
-      BillingMode: PROVISIONED
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-      AttributeDefinitions: 
-        -
-          AttributeName: "MysfitId"
-          AttributeType: "S"
-        -
-          AttributeName: "GoodEvil"
-          AttributeType: "S"
-        - 
-          AttributeName: "LawChaos"
-          AttributeType: "S"
-        - 
-          AttributeName: "Recovered"
-          AttributeType: "S"
-      KeySchema: 
-        - AttributeName: "MysfitId"
-          KeyType: "HASH"
-      GlobalSecondaryIndexes:
-        - IndexName: "LawChaosIndex"
-          KeySchema:
-            - AttributeName: "LawChaos"
-              KeyType: "HASH"
-            - AttributeName: "MysfitId"
-              KeyType: "HASH"
-          Projection: 
-            ProjectionType: "ALL"
-          ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
-        - IndexName: "GoodEvilIndex"
-          KeySchema:
-            - AttributeName: "GoodEvil"
-              KeyType: "HASH"
-            - AttributeName: "MysfitId"
-              KeyType: "RANGE"
-          Projection: 
-            ProjectionType: "ALL"
-          ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
+        UserPoolId: !Ref MysfitsUserPool
+        Domain: auth.mythicalmysfits.houessou.com
+        CustomDomainConfig:
+          CertificateArn: arn:aws:acm:us-east-1:601091111123:certificate/3ca5c12d-3d79-4d96-a91f-0e9b38477474
+    
+    # dynamoDB table to store mysfits
+    MysfitsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "MysfitsTableServerless"
+        BillingMode: PROVISIONED
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        AttributeDefinitions: 
+          - AttributeName: "MysfitId"
+            AttributeType: "S"
+          - AttributeName: "GoodEvil"
+            AttributeType: "S"
+          - AttributeName: "LawChaos"
+            AttributeType: "S"
+        KeySchema: 
+          - AttributeName: "MysfitId"
+            KeyType: "HASH"
+        GlobalSecondaryIndexes:
+          - IndexName: "LawChaosIndex"
+            KeySchema:
+              - AttributeName: "LawChaos"
+                KeyType: "HASH"
+              - AttributeName: "MysfitId"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          - IndexName: "GoodEvilIndex"
+            KeySchema:
+              - AttributeName: "GoodEvil"
+                KeyType: "HASH"
+              - AttributeName: "MysfitId"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
 
+    # Create the bucket to contain the website HTML
+    MysfitsBucketWeb:
+      Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
+      Properties:
+        BucketName: hpf-mythicalmysfitsserverless-web-${opt:stage, self:provider.stage}
+        WebsiteConfiguration:
+          ErrorDocument: 'index.html'
+          IndexDocument: 'index.html'
+    # Read Policy for public read on the bucket
+    ReadPolicy:
+      Type: 'AWS::S3::BucketPolicy'
+      Properties:
+        Bucket: !Ref MysfitsBucketWeb
+        PolicyDocument:
+          Statement:
+            - Action: 's3:GetObject'
+              Effect: Allow
+              Resource: !Sub 'arn:aws:s3:::${MysfitsBucketWeb}/*'
+              Principal: '*'

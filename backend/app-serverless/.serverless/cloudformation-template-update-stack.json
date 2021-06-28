@@ -189,7 +189,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624794945648-2021-06-27T11:55:45.648Z/mythicalmysfits-serverless.zip"
+          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624801770244-2021-06-27T13:49:30.244Z/mythicalmysfits-serverless.zip"
         },
         "Handler": "getmysfits.lambda_handler",
         "Runtime": "python3.8",
@@ -219,7 +219,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624794945648-2021-06-27T11:55:45.648Z/mythicalmysfits-serverless.zip"
+          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624801770244-2021-06-27T13:49:30.244Z/mythicalmysfits-serverless.zip"
         },
         "Handler": "getmysfit.lambda_handler",
         "Runtime": "python3.8",
@@ -249,7 +249,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624794945648-2021-06-27T11:55:45.648Z/mythicalmysfits-serverless.zip"
+          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624801770244-2021-06-27T13:49:30.244Z/mythicalmysfits-serverless.zip"
         },
         "Handler": "likemysfit.lambda_handler",
         "Runtime": "python3.8",
@@ -279,7 +279,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624794945648-2021-06-27T11:55:45.648Z/mythicalmysfits-serverless.zip"
+          "S3Key": "serverless/mythicalmysfits-serverless/dev/1624801770244-2021-06-27T13:49:30.244Z/mythicalmysfits-serverless.zip"
         },
         "Handler": "adoptmysfit.lambda_handler",
         "Runtime": "python3.8",
@@ -854,11 +854,9 @@
     },
     "MysfitsBucketWeb": {
       "Type": "AWS::S3::Bucket",
-      "DeletionPolicy": "Retain",
       "Properties": {
-        "BucketName": "hpf-mythicalmysfitsserverless-web-dev",
+        "BucketName": "hpf-mythicalmysfits-web",
         "WebsiteConfiguration": {
-          "ErrorDocument": "index.html",
           "IndexDocument": "index.html"
         }
       }

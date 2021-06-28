@@ -162,11 +162,9 @@ resources:
     # Create the bucket to contain the website HTML
     MysfitsBucketWeb:
       Type: AWS::S3::Bucket
-      DeletionPolicy: Retain
       Properties:
-        BucketName: hpf-mythicalmysfitsserverless-web-${opt:stage, self:provider.stage}
+        BucketName: hpf-mythicalmysfits-web
         WebsiteConfiguration:
-          ErrorDocument: 'index.html'
           IndexDocument: 'index.html'
     # Read Policy for public read on the bucket
     ReadPolicy:

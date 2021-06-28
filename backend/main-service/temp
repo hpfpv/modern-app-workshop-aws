@@ -1,26 +1,49 @@
 
 
-  getmysfitsGE:          
-    handler: getmysfits.goodevil
-    events:
-      - httpApi:
-          path: /mysfits
-          method: GET
-          request:
-            parameters:
-              querystrings:
-                GoodEvil: true
- 
-  getmysfitsLC:          
-    handler: getmysfits.lawchaos
-    events:
-      - httpApi:
-          path: /mysfits
-          method: GET
-          request:
-            parameters:
-              querystrings:
-                LawChaos: true 
+ # dynamoDB table to store mysfits
+    MysfitsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: "MysfitsTable"
+        BillingMode: PROVISIONED
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        AttributeDefinitions: 
+          - AttributeName: "MysfitId"
+            AttributeType: "S"
+          - AttributeName: "GoodEvil"
+            AttributeType: "S"
+          - AttributeName: "LawChaos"
+            AttributeType: "S"
+        KeySchema: 
+          - AttributeName: "MysfitId"
+            KeyType: "HASH"
+        GlobalSecondaryIndexes:
+          - IndexName: "LawChaosIndex"
+            KeySchema:
+              - AttributeName: "LawChaos"
+                KeyType: "HASH"
+              - AttributeName: "MysfitId"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: "GoodEvilIndex"
+            KeySchema:
+              - AttributeName: "GoodEvil"
+                KeyType: "HASH"
+              - AttributeName: "MysfitId"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+       
 
 {'version': '2.0', 'routeKey': 'GET /mysfits', 'rawPath': '/mysfits', 'rawQueryString': 'GoodEvil=Good', 'headers': {'accept': '*/*', 'accept-encoding': 'gzip, deflate, br', 'cache-control': 'no-cache', 'content-length': '0', 'host': 'kobk72syp2.execute-api.us-east-1.amazonaws.com', 'postman-token': '24e2aefb-4156-486c-a305-1e87a69d2190', 'user-agent': 'PostmanRuntime/7.28.2', 'x-amzn-trace-id': 'Root=1-60d747c9-3ac42bbe7a8b3cf807773261', 'x-forwarded-for': '41.79.219.216', 'x-forwarded-port': '443', 'x-forwarded-proto': 'https'}, 'queryStringParameters': {'GoodEvil': 'Good'}, 'requestContext': {'accountId': '601091111123', 'apiId': 'kobk72syp2', 'domainName': 'kobk72syp2.execute-api.us-east-1.amazonaws.com', 'domainPrefix': 'kobk72syp2', 'http': {'method': 'GET', 'path': '/mysfits', 'protocol': 'HTTP/1.1', 'sourceIp': '41.79.219.216', 'userAgent': 'PostmanRuntime/7.28.2'}, 'requestId': 'BignhimAIAMEJhQ=', 'routeKey': 'GET /mysfits', 'stage': '$default', 'time': '26/Jun/2021:15:29:13 +0000', 'timeEpoch': 1624721353541}, 'isBase64Encoded': False}
 

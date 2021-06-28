@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 import logging
 from collections import defaultdict
 from functools import reduce
@@ -10,7 +11,7 @@ client = boto3.client('dynamodb', region_name='us-east-1')
 # increment the number of likes for a mysfit by 1
 def likeMysfit(mysfitId):
     response = client.update_item(
-        TableName='MysfitsTable',
+        TableName=os.environ['MYSFITS_TABLE'],
         Key={
             'MysfitId': {
                 'S': mysfitId

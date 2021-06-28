@@ -1,34 +1,36 @@
 import boto3
 import json
 import logging
+import os
 from collections import defaultdict
 from functools import reduce
 from boto3.dynamodb.conditions import Key, And
 
 client = boto3.client('dynamodb', region_name='us-east-1')
 
-# increment the number of likes for a mysfit by 1
-def likeMysfit(mysfitId):
+# mark a mysfit as adopted
+def adoptMysfit(mysfitId):
     response = client.update_item(
-        TableName='MysfitsTable',
+        TableName=os.environ['MYSFITS_TABLE'],
         Key={
             'MysfitId': {
                 'S': mysfitId
             }
         },
-        UpdateExpression="SET Likes = Likes + :n",
-        ExpressionAttributeValues={':n': {'N': '1'}}
+        UpdateExpression="SET Adopted = :b",
+        ExpressionAttributeValues={':b': {'BOOL': True}}
     )
 
     response = {}
     response["Update"] = "Success";
 
     return json.dumps(response)
-#path /mysfits/{mysfitId}/like
+
+    #path /mysfits/{mysfitId}/adopt
 def lambda_handler(event, context):
     mysfitId = event['pathParameters']['mysfitId']
-    print('One like for mysfit:' + mysfitId)
-    items = likeMysfit(mysfitId)
+    print('Got adopted mysfit:' + mysfitId)
+    items = adoptMysfit(mysfitId)
     return {
         'statusCode': 200,
         'headers': {

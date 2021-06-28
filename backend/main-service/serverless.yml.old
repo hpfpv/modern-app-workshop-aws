@@ -9,6 +9,13 @@ package:
     - likemysfit.py
     - adoptmysfit.py
 
+plugins:
+  - serverless-stack-output
+
+custom:
+  output:
+    file: outputs/output-mythicalmysfits-app.json
+
 provider:
   name: aws
   runtime: python3.8
@@ -112,68 +119,10 @@ resources:
       Type: AWS::Cognito::UserPoolDomain 
       Properties:
         UserPoolId: !Ref MysfitsUserPool
-        Domain: auth.mythicalmysfits.houessou.com
-        CustomDomainConfig:
-          CertificateArn: arn:aws:acm:us-east-1:601091111123:certificate/3ca5c12d-3d79-4d96-a91f-0e9b38477474
+        Domain: auth-mythicalmysfits-houessou-com
     
-    # dynamoDB table to store mysfits
-    MysfitsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: "MysfitsTableServerless"
-        BillingMode: PROVISIONED
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-        AttributeDefinitions: 
-          - AttributeName: "MysfitId"
-            AttributeType: "S"
-          - AttributeName: "GoodEvil"
-            AttributeType: "S"
-          - AttributeName: "LawChaos"
-            AttributeType: "S"
-        KeySchema: 
-          - AttributeName: "MysfitId"
-            KeyType: "HASH"
-        GlobalSecondaryIndexes:
-          - IndexName: "LawChaosIndex"
-            KeySchema:
-              - AttributeName: "LawChaos"
-                KeyType: "HASH"
-              - AttributeName: "MysfitId"
-                KeyType: "RANGE"
-            Projection: 
-              ProjectionType: "ALL"
-            ProvisionedThroughput:
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
-          - IndexName: "GoodEvilIndex"
-            KeySchema:
-              - AttributeName: "GoodEvil"
-                KeyType: "HASH"
-              - AttributeName: "MysfitId"
-                KeyType: "RANGE"
-            Projection: 
-              ProjectionType: "ALL"
-            ProvisionedThroughput:
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
-
-    # Create the bucket to contain the website HTML
-    MysfitsBucketWeb:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: hpf-mythicalmysfits-web
-        WebsiteConfiguration:
-          IndexDocument: 'index.html'
-    # Read Policy for public read on the bucket
-    ReadPolicy:
-      Type: 'AWS::S3::BucketPolicy'
-      Properties:
-        Bucket: !Ref MysfitsBucketWeb
-        PolicyDocument:
-          Statement:
-            - Action: 's3:GetObject'
-              Effect: Allow
-              Resource: !Sub 'arn:aws:s3:::${MysfitsBucketWeb}/*'
-              Principal: '*'
+  Outputs:
+    MysfitsUserPool:
+      Value: !Ref MysfitsUserPool
+    MysfitsUserPoolClient:
+      Value: MysfitsUserPoolClient

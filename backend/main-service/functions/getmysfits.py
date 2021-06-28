@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 import logging
 from collections import defaultdict
 from functools import reduce
@@ -32,7 +33,7 @@ def queryMysfitItems(filter, value):
     # Use the DynamoDB API Query to retrieve mysfits from the table that are
     # equal to the selected filter values.
     response = client.query(
-        TableName='MysfitsTable',
+        TableName=os.environ['MYSFITS_TABLE'],
         IndexName=filter+'Index',
         KeyConditions={
             filter: {
@@ -49,7 +50,7 @@ def queryMysfitItems(filter, value):
     return json.dumps(mysfitList)
     
 def getmysfits():
-    response = client.scan(TableName='MysfitsTable')
+    response = client.scan(TableName=os.environ['MYSFITS_TABLE'])
     logging.info(response["Items"])
     mysfitList = getMysfitsJson(response["Items"]) 
     return json.dumps(mysfitList)

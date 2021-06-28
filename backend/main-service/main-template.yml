@@ -1,0 +1,232 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "MythicalMysfits main service stack"
+
+Resources:
+  MainApi:
+    Type: AWS::Serverless::Api
+    DependsOn: MysfitsUserPool
+    Properties:
+      StageName: dev
+      Cors: "'*'"
+      Auth:
+        DefaultAuthorizer: MysfitsAuthorizer
+        Authorizers:
+          MysfitsAuthorizer:
+            UserPoolArn: !GetAtt MysfitsUserPool.Arn
+
+  getmysfits:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment: 
+        Variables:
+          MYSFITS_TABLE: !Ref MysfitsTable 
+      CodeUri: ./functions
+      Handler: getmysfits.lambda_handler
+      Runtime: python3.8
+      Events:
+        getmysfitsApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MainApi
+            Path: /mysfits
+            Method: GET
+            Authorizer: NONE
+      Policies:
+        - PolicyName: mythicalmysfits-main-getmysfits-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'dynamodb:*'
+                Resource:
+                  - !GetAtt 'MysfitsTable.Arn'
+                  - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]
+                   
+  getmysfit:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment: 
+        Variables:
+          MYSFITS_TABLE: !Ref MysfitsTable 
+      CodeUri: ./functions
+      Handler: getmysfit.lambda_handler
+      Runtime: python3.8
+      Events:
+        getmysfitsApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MainApi
+            Path: /mysfits/{mysfitId}
+            Method: GET
+            Authorizer: NONE
+      Policies:
+        - PolicyName: mythicalmysfits-main-getmysfit-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'dynamodb:*'
+                Resource:
+                  - !GetAtt 'MysfitsTable.Arn'
+                  - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]
+                    
+  likemysfit:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment: 
+        Variables:
+          MYSFITS_TABLE: !Ref MysfitsTable 
+      CodeUri: ./functions
+      Handler: likemysfit.lambda_handler
+      Runtime: python3.8
+      Events:
+        getmysfitsApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MainApi
+            Path: /mysfits/{mysfitId}/like
+            Method: POST
+      Policies:
+        - PolicyName: mythicalmysfits-main-likemysfit-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'dynamodb:*'
+                Resource:
+                  - !GetAtt 'MysfitsTable.Arn'
+                  - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]    
+
+  adoptmysfit:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment: 
+        Variables:
+          MYSFITS_TABLE: !Ref MysfitsTable 
+      CodeUri: ./functions
+      Handler: adoptmysfit.lambda_handler
+      Runtime: python3.8
+      Events:
+        getmysfitsApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MainApi
+            Path: /mysfits/{mysfitId}/adopt
+            Method: POST
+      Policies:
+        - PolicyName: mythicalmysfits-main-adoptmysfit-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'dynamodb:*'
+                Resource:
+                  - !GetAtt 'MysfitsTable.Arn'
+                  - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]  
+
+  MysfitsUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: MysfitsUserPool-${AWS::StackName}
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+  
+  MysfitsUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: MysfitsUserPoolServerlessClient-${AWS::StackName}
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes:
+          - phone
+          - email
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        UserPoolId:
+          Ref: MysfitsUserPool
+        CallbackURLs: 
+          - https://mythicalmysfits.houessou.com
+        ExplicitAuthFlows:
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        GenerateSecret: false
+        SupportedIdentityProviders: 
+          - COGNITO
+  # Cognito user pool domain
+  MysfitsUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain 
+    Properties:
+      UserPoolId: !Ref MysfitsUserPool
+      Domain: auth-mythicalmysfits-houessou-com
+  
+ # dynamoDB table to store mysfits
+  MysfitsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "MysfitsTable"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions: 
+        - AttributeName: "MysfitId"
+          AttributeType: "S"
+        - AttributeName: "GoodEvil"
+          AttributeType: "S"
+        - AttributeName: "LawChaos"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "MysfitId"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "LawChaosIndex"
+          KeySchema:
+            - AttributeName: "LawChaos"
+              KeyType: "HASH"
+            - AttributeName: "MysfitId"
+              KeyType: "RANGE"
+          Projection: 
+            ProjectionType: "ALL"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: "GoodEvilIndex"
+          KeySchema:
+            - AttributeName: "GoodEvil"
+              KeyType: "HASH"
+            - AttributeName: "MysfitId"
+              KeyType: "RANGE"
+          Projection: 
+            ProjectionType: "ALL"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+
+Outputs:
+  MysfitsUserPool:
+    Value: !Ref MysfitsUserPool
+    Export:
+      Name: !Sub "${AWS::StackName}-MysfitsUserPool"
+  MysfitsUserPoolArn:
+    Value: !GetAtt 'MysfitsUserPool.Arn'
+    Export:
+      Name: !Sub "${AWS::StackName}-MysfitsUserPoolArn"
+  MysfitsUserPoolClient:
+    Value: !Ref MysfitsUserPoolClient
+    Export:
+      Name: !Sub "${AWS::StackName}-MysfitsUserPoolClient"
+  MysfitsTable:
+    Value: !Ref MysfitsTable 
+    Export:
+      Name: !Sub "${AWS::StackName}-MysfitsTable"
+  MysfitsTableArn:
+    Value: !GetAtt 'MysfitsTable.Arn' 
+    Export:
+      Name: !Sub "${AWS::StackName}-MysfitsTableArn"
+  StackName: 
+    Value: !Sub "${AWS::StackName}"

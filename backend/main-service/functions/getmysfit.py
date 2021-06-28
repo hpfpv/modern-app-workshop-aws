@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 import logging
 from collections import defaultdict
 from functools import reduce
@@ -24,7 +25,7 @@ def getMysfitJson(item):
 
 def getMysfit(mysfitId):
     response = client.get_item(
-        TableName='MysfitsTable',
+        TableName=os.environ['MYSFITS_TABLE'],
         Key={
             'MysfitId': {
                 'S': mysfitId

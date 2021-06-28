@@ -1,0 +1,108 @@
+service: mythicalmysfits-serverless-questions
+frameworkVersion: '2'
+
+package:
+  patterns:
+    - '!./**'
+    - postquestion.py
+    - questiontosns.py
+
+plugins:
+  - serverless-stack-output
+
+custom:
+  output:
+    file: outputs/output-mythicalmysfits-questions.json
+
+provider:
+  name: aws
+  runtime: python3.8
+  profile: serverless
+  lambdaHashingVersion: 20201221
+  iamRoleStatements:
+    - Effect: Allow
+      Action: dynamodb:PutItem
+      Resource: 
+        'Fn::Join':
+                  - ''
+                  - - 'arn:aws:dynamodb:'
+                    - Ref: 'AWS::Region'
+                    - ':'
+                    - Ref: 'AWS::AccountId'
+                    - ':table/MysfitsQuestionsTable'
+    - Effect: Allow
+      Action: 'sns:Publish'
+      Resource:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:sns:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':MythicalMysfitsQuestionsTopic'
+  httpApi:
+    cors: true
+    authorizers:
+      MysfitsAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl: 
+          Fn::Join:
+          - ''
+          - - 'https://cognito-idp.'
+            - '${opt:region, self:provider.region}'
+            - '.amazonaws.com/'
+            - Ref: mythicalmysfits-serverless:${output:mythicalmysfits-serverless.MysfitsUserPool}
+        audience:
+          - Ref: mythicalmysfits-serverless:${output:mythicalmysfits-serverless.MysfitsUserPoolClient}
+
+functions:
+  postquestion:
+    handler: postquestion.lambda_handler
+    events:
+      - httpApi:
+          path: /question
+          method: POST
+  publishsns:
+    handler: questiontosns.lambda_handler
+    events:
+      stream:
+        type: dynamodb
+        arn: !GetAtt MysfitsQuestionsTable.StreamArn
+        batchSize: 1
+        startingPosition: TRIM_HORIZON
+
+resources:
+  Resources:
+    # dynamoDB table to store mysfits questions
+    MysfitsQuestionsTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: "MysfitsQuestionsTable"
+        AttributeDefinitions:
+          - AttributeName: "QuestionId"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "QuestionId"
+            KeyType: "HASH"
+        ProvisionedThroughput: 
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_IMAGE"
+      # SNS Topic where new questions will be sent so that
+  # administrators can receive an email regarding the newly posted question.
+    MythicalMysfitsQuestionsTopic:
+      Type: "AWS::SNS::Topic"
+      Properties: 
+        DisplayName: MythicalMysfitsQuestionsTopic
+        Subscription:
+          - Endpoint: 
+              Ref: "pif92@hotmail.com"
+            Protocol: email
+        TopicName: MythicalMysfitsQuestionsTopic
+
+  Outputs:
+    MythicalMysfitsQuestionsTopic:
+      Value: !GetAtt 'MythicalMysfitsQuestionsTopic.TopicArn'
+    MysfitsQuestionsTable:
+      Value: MysfitsQuestionsTable

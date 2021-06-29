@@ -14,6 +14,8 @@ Resources:
         Authorizers:
           MysfitsAuthorizer:
             UserPoolArn: !GetAtt MysfitsUserPool.Arn
+            Identity:
+              Header: Authorization
 
   getmysfits:
     Type: AWS::Serverless::Function

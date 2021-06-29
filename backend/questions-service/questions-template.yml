@@ -33,14 +33,12 @@ Resources:
             Path: /question
             Method: POST
       Policies:
-        - PolicyName: mythicalmysfits-questions-postquestions-policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: 'dynamodb:put*'
-                Resource:
-                  - !GetAtt 'MysfitsQuestionsTable.Arn'
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: 'dynamodb:put*'
+              Resource:
+                - !GetAtt 'MysfitsQuestionsTable.Arn'
                    
   publishquestion:
     Type: AWS::Serverless::Function
@@ -59,14 +57,12 @@ Resources:
             BatchSize: 1
             StartingPosition: TRIM_HORIZON
       Policies:
-        - PolicyName: mythicalmysfits-questions-publishquestion-policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: 'sns:Publish'
-                Resource:
-                  - !Join [ '', [ 'arn:aws:sns:', !Ref 'AWS::Region', ':', !Ref: 'AWS::AccountId', ':', !Ref MythicalMysfitsQuestionsTopic ] ]
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: 'sns:Publish'
+              Resource:
+                - !Join [ '', [ 'arn:aws:sns:', !Ref 'AWS::Region', ':', !Ref: 'AWS::AccountId', ':', !Ref MythicalMysfitsQuestionsTopic ] ]
                     
  # dynamoDB table to store mysfits questions
   MysfitsQuestionsTable:
@@ -97,6 +93,8 @@ Resources:
       TopicName: MythicalMysfitsQuestionsTopic
 
   Outputs:
+    QuestionsApi:
+      Value: !Join [ '', ['https://', !Ref QuestionsApi, '.execute-api.us-east-1.amazonaws.com/dev'] ]
     MythicalMysfitsQuestionsTopicArn:
       Value: !GetAtt 'MythicalMysfitsQuestionsTopic.TopicArn'
     MysfitsQuestionsTable:

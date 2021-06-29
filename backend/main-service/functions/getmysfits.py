@@ -7,6 +7,8 @@ from functools import reduce
 from boto3.dynamodb.conditions import Key, And
 
 client = boto3.client('dynamodb', region_name='us-east-1')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def getMysfitsJson(items):
     # loop through the returned mysfits and add their attributes to a new dict
@@ -56,7 +58,8 @@ def getmysfits():
     return json.dumps(mysfitList)
 
 def lambda_handler(event, context):
-    if (event["rawQueryString"] == ""):
+    logger.info(event)
+    if (event["queryStringParameters"] == None):
         print("Getting all values")
         items = getmysfits()
     else:

@@ -31,17 +31,16 @@ Resources:
             RestApiId: !Ref MainApi
             Path: /mysfits
             Method: GET
-            Authorizer: NONE
+            Auth:  
+              Authorizer: NONE
       Policies:
-        - PolicyName: mythicalmysfits-main-getmysfits-policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: 'dynamodb:*'
-                Resource:
-                  - !GetAtt 'MysfitsTable.Arn'
-                  - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: 'dynamodb:*'
+              Resource:
+                - !GetAtt 'MysfitsTable.Arn'
+                - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]  
                    
   getmysfit:
     Type: AWS::Serverless::Function
@@ -53,23 +52,21 @@ Resources:
       Handler: getmysfit.lambda_handler
       Runtime: python3.8
       Events:
-        getmysfitsApi:
+        getmysfitApi:
           Type: Api
           Properties:
             RestApiId: !Ref MainApi
             Path: /mysfits/{mysfitId}
             Method: GET
-            Authorizer: NONE
+            Auth:  
+              Authorizer: NONE
       Policies:
-        - PolicyName: mythicalmysfits-main-getmysfit-policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: 'dynamodb:*'
-                Resource:
-                  - !GetAtt 'MysfitsTable.Arn'
-                  - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: 'dynamodb:*'
+              Resource:
+                - !GetAtt 'MysfitsTable.Arn'
                     
   likemysfit:
     Type: AWS::Serverless::Function
@@ -81,22 +78,19 @@ Resources:
       Handler: likemysfit.lambda_handler
       Runtime: python3.8
       Events:
-        getmysfitsApi:
+        likemysfitApi:
           Type: Api
           Properties:
             RestApiId: !Ref MainApi
             Path: /mysfits/{mysfitId}/like
             Method: POST
       Policies:
-        - PolicyName: mythicalmysfits-main-likemysfit-policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: 'dynamodb:*'
-                Resource:
-                  - !GetAtt 'MysfitsTable.Arn'
-                  - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]    
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: 'dynamodb:*'
+              Resource:
+                - !GetAtt 'MysfitsTable.Arn'
 
   adoptmysfit:
     Type: AWS::Serverless::Function
@@ -108,27 +102,24 @@ Resources:
       Handler: adoptmysfit.lambda_handler
       Runtime: python3.8
       Events:
-        getmysfitsApi:
+        adoptmysfitApi:
           Type: Api
           Properties:
             RestApiId: !Ref MainApi
             Path: /mysfits/{mysfitId}/adopt
             Method: POST
       Policies:
-        - PolicyName: mythicalmysfits-main-adoptmysfit-policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: 'dynamodb:*'
-                Resource:
-                  - !GetAtt 'MysfitsTable.Arn'
-                  - !Join [ '', [ !GetAtt 'MysfitsTable.Arn', '/index/*' ] ]  
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: 'dynamodb:*'
+              Resource:
+                - !GetAtt 'MysfitsTable.Arn'
 
   MysfitsUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: MysfitsUserPool-${AWS::StackName}
+      UserPoolName: !Sub 'MysfitsUserPool-${AWS::StackName}'
       UsernameAttributes:
         - email
       AutoVerifiedAttributes:
@@ -137,7 +128,7 @@ Resources:
   MysfitsUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:
-        ClientName: MysfitsUserPoolServerlessClient-${AWS::StackName}
+        ClientName: !Sub 'MysfitsUserPoolServerlessClient-${AWS::StackName}'
         AllowedOAuthFlows:
           - implicit
         AllowedOAuthFlowsUserPoolClient: true
@@ -208,6 +199,10 @@ Resources:
             WriteCapacityUnits: 1
 
 Outputs:
+  MainApi:
+    Value: !Join [ '', ['https://', !Ref MainApi, '.execute-api.us-east-1.amazonaws.com/dev'] ]
+    Export:
+      Name: !Sub "${AWS::StackName}-MainApiURL"
   MysfitsUserPool:
     Value: !Ref MysfitsUserPool
     Export:

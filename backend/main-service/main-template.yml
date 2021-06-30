@@ -3,19 +3,20 @@ Transform: AWS::Serverless-2016-10-31
 Description: "MythicalMysfits main service stack"
 
 Resources:
-  MainApi:
-    Type: AWS::Serverless::Api
+  MainHttpApi:
+    Type: AWS::Serverless::HttpApi
     DependsOn: MysfitsUserPool
     Properties:
       StageName: dev
-      Cors: "'*'"
       Auth:
         DefaultAuthorizer: MysfitsAuthorizer
         Authorizers:
           MysfitsAuthorizer:
-            UserPoolArn: !GetAtt MysfitsUserPool.Arn
-            Identity:
-              Header: Authorization
+            IdentitySource: "$request.header.Authorization"
+            JwtConfiguration:
+              Audience: !Ref MysfitsUserPoolClient
+              Issuer: !Join [ '', [ 'https://cognito-idp.', '${AWS::Region}', '.amazonaws.com/', !Ref MysfitsUserPool ] ]  
+            
 
   getmysfits:
     Type: AWS::Serverless::Function
@@ -28,9 +29,9 @@ Resources:
       Runtime: python3.8
       Events:
         getmysfitsApi:
-          Type: Api
+          Type: HttpApi
           Properties:
-            RestApiId: !Ref MainApi
+            ApiId: !Ref MainHttpApi
             Path: /mysfits
             Method: GET
             Auth:  
@@ -55,9 +56,9 @@ Resources:
       Runtime: python3.8
       Events:
         getmysfitApi:
-          Type: Api
+          Type: HttpApi
           Properties:
-            RestApiId: !Ref MainApi
+            ApiId: !Ref MainHttpApi
             Path: /mysfits/{mysfitId}
             Method: GET
             Auth:  
@@ -81,9 +82,9 @@ Resources:
       Runtime: python3.8
       Events:
         likemysfitApi:
-          Type: Api
+          Type: HttpApi
           Properties:
-            RestApiId: !Ref MainApi
+            ApiId: !Ref MainHttpApi
             Path: /mysfits/{mysfitId}/like
             Method: POST
       Policies:
@@ -105,9 +106,9 @@ Resources:
       Runtime: python3.8
       Events:
         adoptmysfitApi:
-          Type: Api
+          Type: HttpApi
           Properties:
-            RestApiId: !Ref MainApi
+            ApiId: !Ref MainHttpApi
             Path: /mysfits/{mysfitId}/adopt
             Method: POST
       Policies:
@@ -201,10 +202,10 @@ Resources:
             WriteCapacityUnits: 1
 
 Outputs:
-  MainApi:
-    Value: !Join [ '', ['https://', !Ref MainApi, '.execute-api.us-east-1.amazonaws.com/dev'] ]
+  MainHttpApi:
+    Value: !Join [ '', ['https://', !Ref MainHttpApi, '.execute-api.us-east-1.amazonaws.com/dev'] ]
     Export:
-      Name: !Sub "${AWS::StackName}-MainApiURL"
+      Name: !Sub "${AWS::StackName}-MainHttpApiURL"
   MysfitsUserPool:
     Value: !Ref MysfitsUserPool
     Export:

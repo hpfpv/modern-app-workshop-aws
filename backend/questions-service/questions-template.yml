@@ -3,18 +3,27 @@ Transform: AWS::Serverless-2016-10-31
 Description: MythicalMysfits users questions service 
 
 Resources:
-  QuestionsApi:
-    Type: AWS::Serverless::Api
-    DependsOn: MysfitsUserPool
+  QuestionsHttpApi:
+    Type: AWS::Serverless::HttpApi
     Properties:
       StageName: dev
-      Cors: "'*'"
+      CorsConfiguration: "'mythicalmysfits.houessou.com'"
       Auth:
         DefaultAuthorizer: MysfitsAuthorizer
         Authorizers:
           MysfitsAuthorizer:
-            UserPoolArn: 
-              Fn::ImportValue: !Sub "${mythicalmysfits-main-service-stack}-MysfitsUserPoolArn"
+            IdentitySource: "$request.header.Authorization"
+            JwtConfiguration:
+              Audience: 
+                - Fn::ImportValue: !Sub "${mythicalmysfits-main-service-stack}-MysfitsUserPoolClient"}
+              Issuer: 
+                - Fn::Join:
+                - ''
+                - - 'https://cognito-idp.'
+                - !Ref "AWS::Region"
+                - '.amazonaws.com/' 
+                - Fn::ImportValue: !Sub "${mythicalmysfits-main-service-stack}-MysfitsUserPool"}  
+              
 
   postquestions:
     Type: AWS::Serverless::Function

@@ -2,6 +2,11 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: "MythicalMysfits main service stack"
 
+Globals:
+  Function:
+    Timeout: 5
+    Runtime: python3.8
+
 Resources:
   MainHttpApi:
     Type: AWS::Serverless::HttpApi
@@ -9,15 +14,22 @@ Resources:
     Properties:
       StageName: dev
       Auth:
-        DefaultAuthorizer: MysfitsAuthorizer
         Authorizers:
           MysfitsAuthorizer:
             IdentitySource: "$request.header.Authorization"
             JwtConfiguration:
-              Audience: !Ref MysfitsUserPoolClient
-              Issuer: !Join [ '', [ 'https://cognito-idp.', '${AWS::Region}', '.amazonaws.com/', !Ref MysfitsUserPool ] ]  
+              issuer: !Join [ '', [ 'https://cognito-idp.', '${AWS::Region}', '.amazonaws.com/', !Ref MysfitsUserPool ] ] 
+              audience: 
+                - !Ref MysfitsUserPoolClient 
+        DefaultAuthorizer: OAuth2Authorizer
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+        AllowOrigins:
+          - https://mythicalmysfits.houessou.com
+          - '*'
             
-
   getmysfits:
     Type: AWS::Serverless::Function
     Properties:
@@ -26,7 +38,6 @@ Resources:
           MYSFITS_TABLE: !Ref MysfitsTable 
       CodeUri: ./functions
       Handler: getmysfits.lambda_handler
-      Runtime: python3.8
       Events:
         getmysfitsApi:
           Type: HttpApi
@@ -53,7 +64,6 @@ Resources:
           MYSFITS_TABLE: !Ref MysfitsTable 
       CodeUri: ./functions
       Handler: getmysfit.lambda_handler
-      Runtime: python3.8
       Events:
         getmysfitApi:
           Type: HttpApi
@@ -79,7 +89,6 @@ Resources:
           MYSFITS_TABLE: !Ref MysfitsTable 
       CodeUri: ./functions
       Handler: likemysfit.lambda_handler
-      Runtime: python3.8
       Events:
         likemysfitApi:
           Type: HttpApi
@@ -103,7 +112,6 @@ Resources:
           MYSFITS_TABLE: !Ref MysfitsTable 
       CodeUri: ./functions
       Handler: adoptmysfit.lambda_handler
-      Runtime: python3.8
       Events:
         adoptmysfitApi:
           Type: HttpApi

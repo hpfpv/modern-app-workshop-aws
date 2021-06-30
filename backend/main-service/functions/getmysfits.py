@@ -59,7 +59,7 @@ def getmysfits():
 
 def lambda_handler(event, context):
     logger.info(event)
-    if (event["queryStringParameters"] == None):
+    if (event["rawQueryString"] == ''):
         print("Getting all values")
         items = getmysfits()
     else:
@@ -70,9 +70,9 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'headers': {
-            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Origin': 'https://mythicalmysfits.houessou.com',
             'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-            'Access-Control-Allow-Methods': '*',
+            'Access-Control-Allow-Methods': 'GET',
             'Content-Type': 'application/json'
         },
         'body': items

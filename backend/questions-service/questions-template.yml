@@ -2,29 +2,42 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: MythicalMysfits users questions service 
 
+Globals:
+  Function:
+    Timeout: 5
+    Runtime: python3.8
+
 Resources:
   QuestionsHttpApi:
     Type: AWS::Serverless::HttpApi
     Properties:
       StageName: dev
-      CorsConfiguration: "'mythicalmysfits.houessou.com'"
       Auth:
-        DefaultAuthorizer: MysfitsAuthorizer
         Authorizers:
           MysfitsAuthorizer:
             IdentitySource: "$request.header.Authorization"
             JwtConfiguration:
-              Audience: 
-                - Fn::ImportValue: !Sub "${mythicalmysfits-main-service-stack}-MysfitsUserPoolClient"}
-              Issuer: 
-                - Fn::Join:
+              issuer: 
+                - !Join
                 - ''
                 - - 'https://cognito-idp.'
-                - !Ref "AWS::Region"
-                - '.amazonaws.com/' 
-                - Fn::ImportValue: !Sub "${mythicalmysfits-main-service-stack}-MysfitsUserPool"}  
+                  - !Ref "AWS::Region"
+                  - '.amazonaws.com/' 
+                  - !ImportValue
+                    'Fn::Sub': '${mythicalmysfits-main-service-stack}-MysfitsUserPool'
+              audience: 
+                - !ImportValue 
+                  'Fn::Sub': "${mythicalmysfits-main-service-stack}-MysfitsUserPoolClient"
+        DefaultAuthorizer: MysfitsAuthorizer
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+        AllowOrigins:
+          - https://mythicalmysfits.houessou.com
+        AllowHeaders: 
+          - '*'
               
-
   postquestions:
     Type: AWS::Serverless::Function
     Properties:
@@ -33,12 +46,11 @@ Resources:
           MYSFITS_QUESTIONS_TABLE: !Ref MysfitsQuestionsTable
       CodeUri: ./functions
       Handler: postquestions.lambda_handler
-      Runtime: python3.8
       Events:
         postquestionsApi:
-          Type: Api
+          Type: HttpApi
           Properties:
-            RestApiId: !Ref QuestionsApi
+            ApiId: !Ref QuestionsHttpApi
             Path: /question
             Method: POST
       Policies:
@@ -57,7 +69,6 @@ Resources:
           TOPIC_ARN: !GetAtt 'MythicalMysfitsQuestionsTopic.TopicArn'
       CodeUri: ./functions
       Handler: publishquestion.lambda_handler
-      Runtime: python3.8
       Events:
         publishquestionStream:
           Type: DynamoDB
@@ -75,36 +86,38 @@ Resources:
                     
  # dynamoDB table to store mysfits questions
   MysfitsQuestionsTable:
-    Type: "AWS::DynamoDB::Table"
+    Type: AWS::DynamoDB::Table
     Properties:
       TableName: "MysfitsQuestionsTable"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: "QuestionId"
           AttributeType: "S"
       KeySchema:
         - AttributeName: "QuestionId"
           KeyType: "HASH"
-      ProvisionedThroughput: 
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
       StreamSpecification:
         StreamViewType: "NEW_IMAGE"
+
   # SNS Topic where new questions will be sent so that
   # administrators can receive an email regarding the newly posted question.
-  MythicalMysfitsQuestionsTopic:
-    Type: "AWS::SNS::Topic"
+  MysfitsQuestionsTopic:
+    Type: AWS::SNS::Topic
     Properties: 
-      DisplayName: MythicalMysfitsQuestionsTopic
+      DisplayName: MysfitsQuestionsTopic
       Subscription:
         - Endpoint: 
-            Ref: "pif92@hotmail.com"
+            - "pif92@hotmail.com"
           Protocol: email
-      TopicName: MythicalMysfitsQuestionsTopic
+      TopicName: MysfitsQuestionsTopic
 
-  Outputs:
-    QuestionsApi:
-      Value: !Join [ '', ['https://', !Ref QuestionsApi, '.execute-api.us-east-1.amazonaws.com/dev'] ]
-    MythicalMysfitsQuestionsTopicArn:
-      Value: !GetAtt 'MythicalMysfitsQuestionsTopic.TopicArn'
-    MysfitsQuestionsTable:
-      Value: MysfitsQuestionsTable
+Outputs:
+  QuestionsHttpApi:
+    Value: !Join [ '', ['https://', !Ref QuestionsHttpApi, '.execute-api.us-east-1.amazonaws.com/dev'] ]
+  MythicalMysfitsQuestionsTopicArn:
+    Value: !GetAtt 'MysfitsQuestionsTopic.TopicArn'
+  MysfitsQuestionsTable:
+    Value: !Ref MysfitsQuestionsTable

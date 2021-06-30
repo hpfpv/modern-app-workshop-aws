@@ -21,13 +21,14 @@ Resources:
               issuer: !Join [ '', [ 'https://cognito-idp.', '${AWS::Region}', '.amazonaws.com/', !Ref MysfitsUserPool ] ] 
               audience: 
                 - !Ref MysfitsUserPoolClient 
-        DefaultAuthorizer: OAuth2Authorizer
+        DefaultAuthorizer: MysfitsAuthorizer
       CorsConfiguration:
         AllowMethods:
           - GET
           - POST
         AllowOrigins:
           - https://mythicalmysfits.houessou.com
+        AllowHeaders:
           - '*'
             
   getmysfits:

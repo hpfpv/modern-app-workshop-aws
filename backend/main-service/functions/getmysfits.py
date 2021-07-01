@@ -18,16 +18,16 @@ def getMysfitsJson(items):
     for item in items:
         mysfit = {}
         mysfit["mysfitId"] = item["MysfitId"]["S"]
-        mysfit["name"] = item["Name"]["S"]
-        mysfit["species"] = item["Species"]["S"]
-        mysfit["description"] = item["Description"]["S"]
-        mysfit["age"] = int(item["Age"]["N"])
-        mysfit["goodevil"] = item["GoodEvil"]["S"]
-        mysfit["lawchaos"] = item["LawChaos"]["S"]
-        mysfit["thumbImageUri"] = item["ThumbImageUri"]["S"]
-        mysfit["profileImageUri"] = item["ProfileImageUri"]["S"]
-        mysfit["likes"] = item["Likes"]["N"]
-        mysfit["adopted"] = item["Adopted"]["BOOL"]
+        mysfit["Name"] = item["Name"]["S"]
+        mysfit["Species"] = item["Species"]["S"]
+        mysfit["Description"] = item["Description"]["S"]
+        mysfit["Age"] = int(item["Age"]["N"])
+        mysfit["GoodEvil"] = item["GoodEvil"]["S"]
+        mysfit["LawChaos"] = item["LawChaos"]["S"]
+        mysfit["ThumbImageUri"] = item["ThumbImageUri"]["S"]
+        mysfit["ProfileImageUri"] = item["ProfileImageUri"]["S"]
+        mysfit["Likes"] = item["Likes"]["N"]
+        mysfit["Adopted"] = item["Adopted"]["BOOL"]
         mysfitList["mysfits"].append(mysfit)
     return mysfitList
 
@@ -48,13 +48,14 @@ def queryMysfitItems(filter, value):
             }
         }
     )
+    logging.info(response["Items"])
     mysfitList = getMysfitsJson(response["Items"])
     return json.dumps(mysfitList)
     
 def getmysfits():
-    response = client.scan(TableName=os.environ['MYSFITS_TABLE'])
+    response = client.scan(TableName='MysfitsTable')
     logging.info(response["Items"])
-    mysfitList = getMysfitsJson(response["Items"]) 
+    mysfitList = getMysfitsJson(response["Items"])
     return json.dumps(mysfitList)
 
 def lambda_handler(event, context):
@@ -62,6 +63,7 @@ def lambda_handler(event, context):
     if (event["rawQueryString"] == ''):
         print("Getting all values")
         items = getmysfits()
+        logger.info(items)
     else:
         print("Getting filtered values")
         data = event["queryStringParameters"].items()

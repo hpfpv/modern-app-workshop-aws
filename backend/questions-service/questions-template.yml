@@ -17,17 +17,9 @@ Resources:
           MysfitsAuthorizer:
             IdentitySource: "$request.header.Authorization"
             JwtConfiguration:
-              issuer: 
-                - !Join
-                - ''
-                - - 'https://cognito-idp.'
-                  - !Ref "AWS::Region"
-                  - '.amazonaws.com/' 
-                  - !ImportValue
-                    'Fn::Sub': '${mythicalmysfits-main-service-stack}-MysfitsUserPool'
+              issuer: !Join [ '', [ 'https://cognito-idp.', '${AWS::Region}', '.amazonaws.com/us-east-1_7LokaUhvT' ] ] 
               audience: 
-                - !ImportValue 
-                  'Fn::Sub': "${mythicalmysfits-main-service-stack}-MysfitsUserPoolClient"
+                - '29j0actm0ituvqkdnb0mlnmqcq'
         DefaultAuthorizer: MysfitsAuthorizer
       CorsConfiguration:
         AllowMethods:
@@ -45,7 +37,7 @@ Resources:
         Variables:
           MYSFITS_QUESTIONS_TABLE: !Ref MysfitsQuestionsTable
       CodeUri: ./functions
-      Handler: postquestions.lambda_handler
+      Handler: postquestion.lambda_handler
       Events:
         postquestionsApi:
           Type: HttpApi
@@ -66,7 +58,7 @@ Resources:
     Properties:
       Environment:
         Variables:
-          TOPIC_ARN: !GetAtt 'MythicalMysfitsQuestionsTopic.TopicArn'
+          TOPIC_ARN: !Ref MysfitsQuestionsTopic
       CodeUri: ./functions
       Handler: publishquestion.lambda_handler
       Events:
@@ -82,7 +74,7 @@ Resources:
             - Effect: Allow
               Action: 'sns:Publish'
               Resource:
-                - !Join [ '', [ 'arn:aws:sns:', !Ref 'AWS::Region', ':', !Ref: 'AWS::AccountId', ':', !Ref MythicalMysfitsQuestionsTopic ] ]
+                - !Ref MysfitsQuestionsTopic
                     
  # dynamoDB table to store mysfits questions
   MysfitsQuestionsTable:
@@ -109,15 +101,14 @@ Resources:
     Properties: 
       DisplayName: MysfitsQuestionsTopic
       Subscription:
-        - Endpoint: 
-            - "pif92@hotmail.com"
+        - Endpoint: 'pif92@hotmail.com'
           Protocol: email
       TopicName: MysfitsQuestionsTopic
 
 Outputs:
   QuestionsHttpApi:
     Value: !Join [ '', ['https://', !Ref QuestionsHttpApi, '.execute-api.us-east-1.amazonaws.com/dev'] ]
-  MythicalMysfitsQuestionsTopicArn:
-    Value: !GetAtt 'MysfitsQuestionsTopic.TopicArn'
+  MysfitsQuestionsTopicArn:
+    Value: !Ref MysfitsQuestionsTopic
   MysfitsQuestionsTable:
     Value: !Ref MysfitsQuestionsTable

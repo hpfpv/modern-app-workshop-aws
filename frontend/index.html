@@ -404,7 +404,7 @@
            } else {
              filterCategoryQS = "LawChaos"
            }
-           var mysfitsApi = mysfitsApiEndpoint + '/mysfits?' + 'filter=' + filterCategoryQS + "&value=" + filterValue;
+           var mysfitsApi = mysfitsApiEndpoint + '/mysfits?'  + filterCategoryQS + "=" + filterValue;
 
            $.ajax({
              url : mysfitsApi,

@@ -18,16 +18,16 @@ def getMysfitsJson(items):
     for item in items:
         mysfit = {}
         mysfit["mysfitId"] = item["MysfitId"]["S"]
-        mysfit["Name"] = item["Name"]["S"]
-        mysfit["Species"] = item["Species"]["S"]
-        mysfit["Description"] = item["Description"]["S"]
-        mysfit["Age"] = int(item["Age"]["N"])
-        mysfit["GoodEvil"] = item["GoodEvil"]["S"]
-        mysfit["LawChaos"] = item["LawChaos"]["S"]
-        mysfit["ThumbImageUri"] = item["ThumbImageUri"]["S"]
-        mysfit["ProfileImageUri"] = item["ProfileImageUri"]["S"]
-        mysfit["Likes"] = item["Likes"]["N"]
-        mysfit["Adopted"] = item["Adopted"]["BOOL"]
+        mysfit["name"] = item["Name"]["S"]
+        mysfit["species"] = item["Species"]["S"]
+        mysfit["description"] = item["Description"]["S"]
+        mysfit["age"] = int(item["Age"]["N"])
+        mysfit["goodevil"] = item["GoodEvil"]["S"]
+        mysfit["lawchaos"] = item["LawChaos"]["S"]
+        mysfit["thumbImageUri"] = item["ThumbImageUri"]["S"]
+        mysfit["profileImageUri"] = item["ProfileImageUri"]["S"]
+        mysfit["likes"] = item["Likes"]["N"]
+        mysfit["adopted"] = item["Adopted"]["BOOL"]
         mysfitList["mysfits"].append(mysfit)
     return mysfitList
 

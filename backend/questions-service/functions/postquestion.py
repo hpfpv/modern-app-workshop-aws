@@ -12,27 +12,33 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     logger.info(event)
-    #eventBody = json.loads(event["body"])
+    eventBody = json.loads(event["body"])
     question = {}
     question["QuestionId"] = {
         "S": str(uuid.uuid4())
         }
     question["QuestionText"] = {
-        "S": event["queryStringParameters"]["questionText"]
+        "S": eventBody["questionText"]
         }
     question["UserEmailAddress"] = {
-        "S": event["queryStringParameters"]["email"]
+        "S": eventBody["email"]
         }
 
-    client.put_item(
+    response = client.put_item(
         TableName=os.environ['MYSFITS_QUESTIONS_TABLE'],
         Item=question
         ) 
-    response = {}
-    response["headers"] = {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*", "Access-Control-Allow-Methods": "*"}
-    response["statusCode"] = 200
+    logger.info(response)   
     responseBody = {}
     responseBody["status"] = "success"
-    response["body"] =  json.dumps(responseBody)
-    logger.info(response)
-    return response
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Origin': 'https://mythicalmysfits.houessou.com',
+            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+            'Access-Control-Allow-Methods': 'GET',
+            'Content-Type': 'application/json'
+        },
+        'body': json.dumps(responseBody)  
+    }
+

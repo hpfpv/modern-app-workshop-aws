@@ -43,8 +43,10 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref QuestionsHttpApi
-            Path: /question
+            Path: /questions
             Method: POST
+            Auth:  
+              Authorizer: NONE
       Policies:
         - Version: "2012-10-17"
           Statement:

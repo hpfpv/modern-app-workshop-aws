@@ -26,5 +26,5 @@ def lambda_handler(event, context):
         return response
     except Exception as er:
         print(er)
-        print('Couldnt publish message to SNS')
+        print('Couldn't publish message to SNS')
     

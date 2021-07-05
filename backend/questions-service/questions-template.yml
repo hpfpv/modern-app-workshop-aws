@@ -78,7 +78,7 @@ Resources:
               Resource:
                 - !Ref MysfitsQuestionsTopic
                     
- # dynamoDB table to store mysfits questions
+ # dynamoDB table to store users questions
   MysfitsQuestionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -97,7 +97,7 @@ Resources:
         StreamViewType: "NEW_IMAGE"
 
   # SNS Topic where new questions will be sent so that
-  # administrators can receive an email regarding the newly posted question.
+  # Mythical Mysfits staff can receive an email regarding the newly posted question.
   MysfitsQuestionsTopic:
     Type: AWS::SNS::Topic
     Properties: 

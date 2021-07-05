@@ -3,8 +3,6 @@ import json
 import os
 import logging
 import uuid
-import random
-import time
 
 client = boto3.client('dynamodb')
 logger = logging.getLogger()

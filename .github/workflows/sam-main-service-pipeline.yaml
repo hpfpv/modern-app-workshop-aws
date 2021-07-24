@@ -18,10 +18,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
 
-      # go to service directory
-      - run: pushd './backend/main-service/'
       # sam build 
-      - run: sam build --use-container 
+      - name: sam build
+        working-directory: ./backend/main-service
+        run: sam build --use-container 
 
 # Run Unit tests- Specify unit tests here 
      ## - run: |
@@ -32,4 +32,6 @@ jobs:
           ## python -m nose2 
 
 # sam deploy
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name 'mythicalmysfits-main-service-stack' --s3-bucket 'aws-sam-cli-managed-default-samclisourcebucket-1m8qnzobarz4q' --capabilities CAPABILITY_IAM --region 'us-east-1'
+      - name: sam deploy
+        working-directory: ./backend/main-service 
+        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name 'mythicalmysfits-main-service-stack' --s3-bucket 'aws-sam-cli-managed-default-samclisourcebucket-1m8qnzobarz4q' --capabilities CAPABILITY_IAM --region 'us-east-1'
